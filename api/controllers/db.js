@@ -53,7 +53,7 @@ module.exports.users = {
     try {
       const request = await pool.request()
       request.input('id', sql.Int, id)
-      const result = await request.query(`SELECT id, email, firstname, lastname, active FROM tblUsers WHERE id = @id`)
+      const result = await request.query(`SELECT id, email, firstname, lastname, otp, active FROM tblUsers WHERE id = @id`)
       return result;
     } catch (err) {
       throw(err)
