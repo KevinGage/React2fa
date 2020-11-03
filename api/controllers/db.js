@@ -58,5 +58,23 @@ module.exports.users = {
     } catch (err) {
       throw(err)
     }
+  },
+  updateTotpSecret: async (id, key) => {
+    if (!pool.connected) {
+      await pool.connect()
+    }
+    try {
+      const request = await pool.request()
+      request.input('id', sql.BigInt, id)
+      request.input('key', sql.VarChar, key)
+
+      const result = await request.query(`UPDATE tblUsers
+        SET otp = @key
+        WHERE id = @id`)
+
+      return result;
+    } catch (err) {
+      throw(err)
+    }
   }
 }
