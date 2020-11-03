@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const Otp = () => {
   const [otpCode, setOtpCode] = useState('');
+  const [otpSecret, setOtpSecret] = useState('');
 
   //const [otpConfigured, setOtpConfigured, otpAuthenticated, setOtpAuthenticated] = useContext(OtpContext);
   const otpConfigured = useContext(OtpContext)[0];
@@ -14,13 +15,18 @@ const Otp = () => {
   const generateQR = async () => {
     try {
       const res = await axios.get('/auth/setup-totp');
+      const app = res.data.data.app;
+      const email = res.data.data.email;
+      const secret = res.data.data.secret;
+      const period = res.data.data.period;
+      const otpUrl = `otpauth://totp/${app}:${email}?secret=${secret}&period=${period}`;
 
       if (res.status === 200) {
-        console.log(res.data.data);
         new QRious({
           element: document.getElementById("qr-div"),
-          value: res.data.data
+          value: otpUrl
         });
+        setOtpSecret(() => secret)
         setOtpConfigured(() => true);
       } else {
         console.log(res);
@@ -70,6 +76,7 @@ const Otp = () => {
         />
       </form> : null}
       <canvas id="qr-div" />
+      {otpSecret}
       <br />
       <button onClick={generateQR}> Generate New QR </button>
 

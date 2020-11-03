@@ -30,9 +30,12 @@ router.get('/setup-totp', async(req, res, next) => {
   try {
     await db.users.updateTotpSecret(req.user.id, secret);
 
-    const otpUrl = `otpauth://totp/React2FaTest:${req.user.email}?secret=${secret}&period=30`;
-
-    return res.status(200).send({'data': otpUrl});
+    return res.status(200).send({'data': {
+      'app': 'React2faTest',
+      'email': req.user.email,
+      'secret': secret.toString().replace(/=/g, ''),
+      'period': 30
+    }});
   } catch (err) {
     return next(err);
   }
