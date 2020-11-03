@@ -16,6 +16,7 @@
     "mssql": "^6.2.3",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "passport-totp": "0.0.2"
+    "passport-totp": "0.0.2",
+    "thirty-two": "^1.0.2"
   }
 }

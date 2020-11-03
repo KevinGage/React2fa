@@ -4,7 +4,10 @@ const db = require('../controllers/db');
 const authorize = require('../controllers/authorization');
 
 /* Anything below this middleware will require the user to be logged in */
-router.use(authorize);
+router.use(authorize.authorize);
+
+/* Anything below this middleware will require 2fa */
+router.use(authorize.authorizeSecondFactor);
 
 /* GET a user by id. */
 router.get('/:ID', async(req, res, next) => {
@@ -15,7 +18,13 @@ router.get('/:ID', async(req, res, next) => {
     if (!user) {
       return res.status(404).send();
     }
-    return res.status(200).json({'data':user});
+    return res.status(200).json({'data': {
+      'id': user.id,
+      'email': user.email,
+      'firstname': user.firstname,
+      'lastname': user.lastname,
+      'active': user.active
+    }});
   } catch (err) {
     return next(err);
   }

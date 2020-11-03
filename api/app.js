@@ -1,5 +1,4 @@
 var express = require('express');
-var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require("express-session");
@@ -7,6 +6,7 @@ const session = require("express-session");
 /* import passport authentication package */
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
+const TotpStrategy = require('passport-totp').Strategy;
 
 /* import database controller */
 const db = require('./controllers/db');
@@ -22,7 +22,7 @@ var app = express();
 app.use(logger('dev'));
 
 /* configure passport authentication middleware */
-let strategy = new localStrategy(
+const strategy = new localStrategy(
   async function(email, password, done) {
     let user;
     try {
@@ -40,6 +40,17 @@ let strategy = new localStrategy(
 );
 
 passport.use(strategy);
+
+const totpStrategy = new TotpStrategy(
+  //returns users key and validity period for key.
+  async function(user, done){
+    const key = user.otp;
+
+    return done(null, key, 30);
+  }
+);
+
+passport.use(totpStrategy);
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
