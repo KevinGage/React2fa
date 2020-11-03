@@ -70,7 +70,8 @@ router.get('/user', async(req, res, next) => {
     'email': req.user.email,
     'firstname': req.user.firstname,
     'lastname': req.user.lastname,
-    'active': req.user.active
+    'active': req.user.active,
+    'otp': req.user.otp ? true : false
   }});
 })
 

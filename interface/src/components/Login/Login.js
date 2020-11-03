@@ -1,5 +1,6 @@
 import React, {useState, useContext} from 'react';
 import {AuthContext} from '../Auth/AuthProvider';
+import {OtpContext} from '../Auth/OtpProvider';
 import axios from 'axios';
 
 const Login = () => {
@@ -10,11 +11,15 @@ const Login = () => {
   const setAuthenticated = useContext(AuthContext)[1];
   const setUser = useContext(AuthContext)[3];
 
+  //const [otpConfigured, setOtpConfigured, otpAuthenticated, setOtpAuthenticated] = useContext(OtpContext);
+  const setOtpConfigured = useContext(OtpContext)[1];
+
   const login = async () => {
     const result = await authenticate();
     if (result) {
-      setUser(() => {return {username: result}});
+      setUser(() => {return {username: result.username}});
       setAuthenticated(() => true);
+      setOtpConfigured(() => result.totpConfigured);
     }
   }
 
@@ -24,8 +29,10 @@ const Login = () => {
       const res = await axios.post('/auth/login', { username: username, password: password});
 
       if (res.status === 200) {
-        const username = res.data.data.email;
-        return username;
+        return {
+          'username': res.data.data.email,
+          'totpConfigured': res.data.data.otp
+        };
       } else {
         console.log(res);
         return false;

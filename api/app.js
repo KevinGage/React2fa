@@ -2,6 +2,7 @@ var express = require('express');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require("express-session");
+const base32 = require('thirty-two');
 
 /* import passport authentication package */
 const passport = require('passport');
@@ -44,7 +45,7 @@ passport.use(strategy);
 const totpStrategy = new TotpStrategy(
   //returns users key and validity period for key.
   async function(user, done){
-    const key = user.otp;
+    const key = base32.decode(user.otp);
 
     return done(null, key, 30);
   }

@@ -23,7 +23,8 @@ router.get('/:ID', async(req, res, next) => {
       'email': user.email,
       'firstname': user.firstname,
       'lastname': user.lastname,
-      'active': user.active
+      'active': user.active,
+      'otp': req.user.otp ? true : false
     }});
   } catch (err) {
     return next(err);
